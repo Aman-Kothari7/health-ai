@@ -10,6 +10,7 @@ import 'package:login_flutter_app/src/features/authentication/screens/mail_verif
 import 'package:login_flutter_app/src/features/authentication/screens/on_boarding/on_boarding_screen.dart';
 import 'package:login_flutter_app/src/features/authentication/screens/welcome/welcome_screen.dart';
 import 'package:login_flutter_app/src/features/core/screens/dashboard/dashboard.dart';
+import 'package:login_flutter_app/src/features/core/screens/dashboard/main_dashboard.dart';
 import 'package:login_flutter_app/src/features/core/screens/initial_dashboard/initial_dashboard_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'exceptions/t_exceptions.dart';
@@ -45,7 +46,7 @@ class AuthenticationRepository extends GetxController {
   setInitialScreen(User? user) async {
     user == null
         ? Get.offAll(() => const WelcomeScreen())
-        : Get.offAll(() => const Dashboard());
+        : Get.offAll(() => MainDashboardScreen());
   }
 
   Future<bool> isWeightStored() async {
@@ -64,7 +65,7 @@ class AuthenticationRepository extends GetxController {
         Get.offAll(() =>
             initialDashboardScreen()); // User is not logged in, but weight is stored
       } else {
-        Get.offAll(() => Dashboard()); // User is logged in
+        Get.offAll(() => MainDashboardScreen()); // User is logged in
       }
     }
   }
@@ -122,6 +123,8 @@ class AuthenticationRepository extends GetxController {
   }
 
   /* ---------------------------- Federated identity & social sign-in ---------------------------------*/
+
+  //TODO: add saving user preferences functionality
 
   /// [GoogleAuthentication] - GOOGLE
   Future<UserCredential?> signInWithGoogle() async {

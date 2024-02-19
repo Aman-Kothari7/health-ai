@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:login_flutter_app/src/features/authentication/controllers/initial_settings_controller.dart';
 import 'package:login_flutter_app/src/features/authentication/models/user_model.dart';
 import 'package:login_flutter_app/src/repository/user_repository/user_repository.dart';
 import '../../../repository/authentication_repository/authentication_repository.dart';
@@ -51,11 +52,17 @@ class SignUpController extends GetxController {
       final auth = AuthenticationRepository.instance;
       await auth.registerWithEmailAndPassword(user.email, user.password!);
       await UserRepository.instance.createUser(user);
+      // Initialize user preferences from SharedPreferences
+      final initialSettingsController = InitialSettingsController();
+      final preferences = await initialSettingsController.getUserPreferences();
+      // Store the user preferences in Firestore
+      await UserRepository.instance.storeUserPreferences(preferences);
       auth.setInitialScreen(auth.firebaseUser);
-
     } catch (e) {
       isLoading.value = false;
-      Get.snackbar("Error", e.toString(), snackPosition: SnackPosition.BOTTOM, duration: const Duration(seconds: 5));
+      Get.snackbar("Error", e.toString(),
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 5));
     }
   }
 

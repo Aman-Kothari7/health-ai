@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:login_flutter_app/src/features/authentication/models/user_preferences_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InitialSettingsController extends GetxController {
@@ -54,6 +55,21 @@ class InitialSettingsController extends GetxController {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setBool('isKg', isKg);
  }
+
+ Future<UserPreferences> getUserPreferences() async {
+  final prefs = await SharedPreferences.getInstance();
+  return UserPreferences(
+    age: prefs.getInt('age') ?? 0,
+    weightGoal: prefs.getString('weightGoal') ?? '',
+    weight: prefs.getDouble('weight') ?? 0.0,
+    gender: prefs.getString('gender') ?? '',
+    activityLevel: prefs.getString('activityLevel') ?? '',
+    heightCM: prefs.getInt('heightCM') ?? 0,
+  );
+}
+
+
+ 
 
 }
 

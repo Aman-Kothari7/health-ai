@@ -18,7 +18,7 @@ class WorkoutPlanCard extends StatelessWidget {
           padding: EdgeInsets.all(initialDashCardPadding * 2),
           child: Center(
             child: Text(
-              'Create Workout Plan',
+              'Generate Workout Plan',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
