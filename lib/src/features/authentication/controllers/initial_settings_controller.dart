@@ -64,7 +64,7 @@ class InitialSettingsController extends GetxController {
     weight: prefs.getDouble('weight') ?? 0.0,
     gender: prefs.getString('gender') ?? '',
     activityLevel: prefs.getString('activityLevel') ?? '',
-    heightCM: prefs.getInt('heightCM') ?? 0,
+    heightCM: prefs.getInt('heightCM') ?? 0, UID: '',
   );
 }
 

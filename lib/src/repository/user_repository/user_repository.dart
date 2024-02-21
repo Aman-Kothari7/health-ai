@@ -40,7 +40,8 @@ class UserRepository extends GetxController {
     final userPreferencesCollection =
         FirebaseFirestore.instance.collection('user_preferences');
 
-    await userPreferencesCollection.doc(userId).set(preferences.toJson());
+    //await userPreferencesCollection.doc(userId).set(preferences.toJson());
+    await _db.collection("user_preferences").add(preferences.toJson());
   }
 
   /// Fetch User Specific details

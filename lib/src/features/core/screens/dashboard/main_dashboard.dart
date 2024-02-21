@@ -340,7 +340,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
                       children: [
                         MealPlanCard(
                           onCardTap: () =>
-                              _showSignUpDialog(context, 'Generate Meal Plan'),
+                              _showSignUpDialog(context, 'This is the main dashboard'),
                         ),
                         WorkoutPlanCard(
                           onCardTap: () =>
