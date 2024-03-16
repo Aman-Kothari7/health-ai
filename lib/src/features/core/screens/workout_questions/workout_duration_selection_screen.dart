@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:login_flutter_app/src/features/authentication/controllers/initial_settings_controller.dart';
+import 'package:login_flutter_app/src/features/core/screens/dashboard/workout_dashboard.dart';
+import 'package:login_flutter_app/src/repository/user_repository/user_repository.dart';
 // Import the next screen or the home screen if this is the last selection screen
 
 class WorkoutDurationSelectionScreen extends StatefulWidget {
   @override
-  _WorkoutDurationSelectionScreenState createState() => _WorkoutDurationSelectionScreenState();
+  _WorkoutDurationSelectionScreenState createState() =>
+      _WorkoutDurationSelectionScreenState();
 }
 
-class _WorkoutDurationSelectionScreenState extends State<WorkoutDurationSelectionScreen> {
+class _WorkoutDurationSelectionScreenState
+    extends State<WorkoutDurationSelectionScreen> {
   int _selectedDuration = 30; // Default workout duration
+  final InitialSettingsController settingsController =
+      Get.find<InitialSettingsController>();
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +72,13 @@ class _WorkoutDurationSelectionScreenState extends State<WorkoutDurationSelectio
             margin: EdgeInsets.all(16),
             child: ElevatedButton(
               child: Text('Next'),
-              onPressed: () {
-                // Implement navigation to the next screen or action
+              onPressed: () async {
+                settingsController.saveWorkoutDuration(_selectedDuration);
+                final initialSettingsController = InitialSettingsController();
+                final preferences =
+                    await initialSettingsController.getWorkoutUserPreferences();
+                await UserRepository.instance.storeUserWorkoutPreferences(preferences);
+                Get.to(() => const WorkoutDashboardScreen());
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
@@ -85,7 +97,8 @@ class _WorkoutDurationSelectionScreenState extends State<WorkoutDurationSelectio
     IconData iconData;
     switch (duration) {
       case 30:
-        iconData = Icons.timer; // For simplicity, using the same icon with different tags
+        iconData = Icons
+            .timer; // For simplicity, using the same icon with different tags
         break;
       case 45:
         iconData = Icons.timer;
@@ -116,7 +129,8 @@ class _WorkoutDurationSelectionScreenState extends State<WorkoutDurationSelectio
         iconData,
         color: _selectedDuration == duration ? Colors.white : Colors.black,
       ),
-      backgroundColor: _selectedDuration == duration ? Colors.blue : Colors.grey[200],
+      backgroundColor:
+          _selectedDuration == duration ? Colors.blue : Colors.grey[200],
       heroTag: "duration$duration", // Ensures unique hero tags
     );
   }

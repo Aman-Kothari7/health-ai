@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:login_flutter_app/src/features/authentication/controllers/initial_settings_controller.dart';
 import 'package:login_flutter_app/src/features/core/screens/workout_questions/workout_duration_selection_screen.dart';
 // Import your next screen here if you have one
 
@@ -10,6 +11,8 @@ class DaysPerWeekSelectionScreen extends StatefulWidget {
 
 class _DaysPerWeekSelectionScreenState extends State<DaysPerWeekSelectionScreen> {
   int _selectedDays = 3; // Default number of days
+  final InitialSettingsController settingsController =
+      Get.find<InitialSettingsController>();
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +72,7 @@ class _DaysPerWeekSelectionScreenState extends State<DaysPerWeekSelectionScreen>
               child: Text('Next'),
               onPressed: () {
                 // Implement navigation to the next screen or action
+                settingsController.saveWorkoutDaysPerWeek(_selectedDays);
                 Get.to(() => WorkoutDurationSelectionScreen());
               },
               style: ElevatedButton.styleFrom(

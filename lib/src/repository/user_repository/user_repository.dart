@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:login_flutter_app/src/features/authentication/models/user_model.dart';
 import 'package:login_flutter_app/src/features/authentication/models/user_preferences_model.dart';
+import 'package:login_flutter_app/src/features/authentication/models/user_workout_preferences.dart';
 import 'package:login_flutter_app/src/repository/authentication_repository/authentication_repository.dart';
 import '../authentication_repository/exceptions/t_exceptions.dart';
 
@@ -42,6 +45,113 @@ class UserRepository extends GetxController {
 
     //await userPreferencesCollection.doc(userId).set(preferences.toJson());
     await _db.collection("user_preferences").add(preferences.toJson());
+  }
+
+  //Print entire collection
+  // var collection_ref = _db.collection('user_workout_preferences');
+  // QuerySnapshot querySnapshot = await collection_ref.get();
+  // final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+  // for (var document in allData) {
+  //   print(document); // Prints the document data to the console
+  // }
+
+  Future<Map<String, dynamic>?> fetchUserWorkoutPlan(String userId) async {
+    try {
+      var document =
+          await _db.collection('user_workout_plan_details').doc(userId).get();
+      return document.exists ? document.data() : null;
+    } catch (e) {
+      print("Error fetching workout plan: $e");
+      return null;
+    }
+  }
+
+  Future<void> matchAndStoreWorkoutPlan(
+      UserWorkoutPreferences userPreferences) async {
+    final userId = AuthenticationRepository.instance.getUserID;
+    print("User id in user preferences:");
+    print(userId);
+
+    QuerySnapshot workoutPreferencesForUser = await _db
+        .collection('user_workout_preferences')
+        .where("UID", isEqualTo: userId.trim())
+        .get();
+
+    print("Documents matching UID: ${workoutPreferencesForUser.docs.length}");
+
+    if (workoutPreferencesForUser.docs.isNotEmpty) {
+      print("Document found");
+      print("workoutPreferencesForUser");
+    } else {
+      print("Empty");
+    }
+
+    var workoutPreferencesForUserDocument =
+        workoutPreferencesForUser.docs.first;
+    print(workoutPreferencesForUserDocument);
+
+    String workoutLocationLower = userPreferences.workoutLocation.toLowerCase();
+    String workoutExperienceLevelLower =
+        userPreferences.workoutExperienceLevel.toLowerCase();
+    String workoutTrainingStyleLower =
+        userPreferences.workoutTrainingStyle.toLowerCase();
+    String workoutGoalLower = userPreferences.workoutGoal.toLowerCase();
+    int workoutDuration = userPreferences.workoutDuration;
+    int workoutDaysPerWeek = userPreferences.workoutDaysPerWeek;
+
+    // Step 2: Query the `workoutplans` collection
+    QuerySnapshot workoutPlansSnapshot = await _db
+        .collection('workoutplans')
+        .where('days_per_week', isEqualTo: workoutDaysPerWeek)
+        .where('location', isEqualTo: workoutLocationLower)
+        .where('preference', isEqualTo: workoutTrainingStyleLower)
+        .where('level', isEqualTo: workoutExperienceLevelLower)
+        .where('goal', isEqualTo: workoutGoalLower)
+        .where('time_per_workout', isEqualTo: workoutDuration)
+        .get();
+
+    var selectedWorkoutPlan = workoutPlansSnapshot.docs.first;
+    print("Selected workout plan $selectedWorkoutPlan");
+
+    var workoutID = selectedWorkoutPlan.get('workoutid');
+
+    await _db
+        .collection('user_workout_preferences')
+        .doc(workoutPreferencesForUserDocument.id)
+        .update({'WID': workoutID});
+
+    var workoutPlanJson = selectedWorkoutPlan.get('response');
+
+    addWorkoutPlanToUser(userId, workoutPlanJson);
+  }
+
+  // Function to save the workout plan details for a user
+  Future<void> saveUserWorkoutPlan(
+      String userId, Map<String, dynamic> workoutPlan) async {
+    await _db.collection('user_workout_plan_details').doc(userId).set({
+      'workout_plan': workoutPlan,
+      'userId': userId, 
+    });
+  }
+
+  // Example function that decodes a workout plan from a JSON string and saves it
+  Future<void> addWorkoutPlanToUser(
+      String userId, String workoutPlanJson) async {
+    // Decoding the JSON string into a Dart object
+    Map<String, dynamic> workoutPlan = json.decode(workoutPlanJson);
+
+    // Calling the function to save the workout plan to Firestore
+    await saveUserWorkoutPlan(userId, workoutPlan['workout_plan']);
+  }
+
+  Future<void> storeUserWorkoutPreferences(
+      UserWorkoutPreferences preferences) async {
+    final userId = AuthenticationRepository.instance.getUserID;
+    print(userId);
+    //await userPreferencesCollection.doc(userId).set(preferences.toJson());
+    await _db.collection("user_workout_preferences").add(preferences.toJson());
+    matchAndStoreWorkoutPlan(preferences);
   }
 
   /// Fetch User Specific details

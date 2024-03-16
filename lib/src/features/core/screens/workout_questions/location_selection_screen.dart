@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:login_flutter_app/src/features/authentication/controllers/initial_settings_controller.dart';
 import 'package:login_flutter_app/src/features/core/screens/workout_questions/experience_selection_screen.dart';
 
 // //import 'your_next_screen_path.dart'; // Replace with your actual import for the next screen
@@ -12,6 +13,8 @@ class LocationSelectionScreen extends StatefulWidget {
 
 class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
   String _selectedLocation = 'Home'; // Default or initial location
+  final InitialSettingsController settingsController =
+      Get.put(InitialSettingsController());
 
   @override
   Widget build(BuildContext context) {
@@ -140,8 +143,7 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
             child: ElevatedButton(
               child: Text('Next'),
               onPressed: () {
-                // Save the selected location and navigate to the next screen
-                // Example: Get.to(() => YourNextScreen());
+                settingsController.saveWorkoutLocation(_selectedLocation);
                 Get.to(() => ExperienceSelectionScreen());
               },
               style: ElevatedButton.styleFrom(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:login_flutter_app/src/features/authentication/controllers/initial_settings_controller.dart';
 import 'package:login_flutter_app/src/features/core/screens/workout_questions/training_style_selection_screen.dart';
 // Import the next screen if you have one already defined
 
@@ -10,6 +11,8 @@ class ExperienceSelectionScreen extends StatefulWidget {
 
 class _ExperienceSelectionScreenState extends State<ExperienceSelectionScreen> {
   String _selectedExperience = 'Beginner'; // Default or initial experience level
+  final InitialSettingsController settingsController =
+      Get.find<InitialSettingsController>();
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +70,7 @@ class _ExperienceSelectionScreenState extends State<ExperienceSelectionScreen> {
             child: ElevatedButton(
               child: Text('Next'),
               onPressed: () {
-                // Implement the navigation to the next screen
+                settingsController.saveWorkoutExperienceLevel(_selectedExperience);
                 Get.to(() => TrainingStyleSelectionScreen());
               },
               style: ElevatedButton.styleFrom(

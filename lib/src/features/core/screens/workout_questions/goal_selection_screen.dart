@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:login_flutter_app/src/features/authentication/controllers/initial_settings_controller.dart';
 import 'package:login_flutter_app/src/features/core/screens/workout_questions/days_per_week_selection_screen.dart';
 
 // Import your next screen here if you have one
@@ -11,6 +12,8 @@ class GoalSelectionScreen extends StatefulWidget {
 
 class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
   String _selectedGoal = 'Gain Muscle'; // Default fitness goal
+  final InitialSettingsController settingsController =
+      Get.find<InitialSettingsController>();
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +70,7 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
               child: Text('Next'),
               onPressed: () {
                 // Implement navigation to the next screen or action
+                settingsController.saveWorkoutGoal(_selectedGoal);
                 Get.to(() => DaysPerWeekSelectionScreen());
               },
               style: ElevatedButton.styleFrom(
